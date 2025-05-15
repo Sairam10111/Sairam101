@@ -1,0 +1,1907 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Siri Automobiles - Spare Parts</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 30px;
+      background: #f7f9fc;
+      color: #333;
+      overflow-x: hidden; /* Prevent horizontal scrolling */
+    }
+    h1, h2 {
+      color: #2c3e50;
+    }
+    .header, .cart, .product, .summary, .admin, .login-form {
+      background: #fff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .product {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 5px;
+      background: #3498db;
+      color: white;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background: #2980b9;
+    }
+    input[type="text"], input[type="password"], input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+    .highlight {
+      font-weight: bold;
+      color: #e74c3c;
+    }
+    .cart-item, .admin-item {
+      margin: 10px 0;
+      border-bottom: 1px dashed #ccc;
+      padding-bottom: 5px;
+    }
+    .flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #currentDate {
+      font-size: 0.9em;
+      color: #777;
+      margin-top: 10px;
+    }
+    .admin-actions button {
+      margin-left: 5px;
+    }
+
+    #billView {
+      display: none;
+      padding: 20px;
+      background: #fff;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      z-index: 9999;
+      box-sizing: border-box;
+    }
+
+    #billContent {
+      max-width: 100%; /* Prevent it from overflowing */
+      margin: 0 auto;
+      overflow-wrap: break-word;
+    }
+
+    .btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 5px;
+      background: #3498db;
+      color: white;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      background: #2980b9;
+    }
+
+    /* Prevent content overflow on the page */
+    .highlight {
+      font-weight: bold;
+      color: #e74c3c;
+    }
+
+    @media print {
+      #billView {
+        position: static;
+        width: auto;
+        height: auto;
+      }
+
+      #billContent {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        overflow-x: hidden;
+      }
+    }
+  
+@media (max-width: 600px) {
+  .product {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .product div {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .cart-item, .admin-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .summary 
+}
+</style>
+
+<style>
+@media print {
+  body {
+    color: #000 !important;
+    font-family: 'Segoe UI', sans-serif !important;
+  }
+  .mishra-bill {
+    color: #000 !important;
+    font-weight: bold !important;
+    font-size: 16px !important;
+  }
+  .mishra-bill h2, .mishra-bill .header-line, .mishra-bill .info,
+  .mishra-bill table, .mishra-bill th, .mishra-bill td,
+  .mishra-bill .summary td, .thank-you {
+    color: #000 !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+  }
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+  #billView {
+    zoom: 100%;
+    page-break-inside: avoid;
+  }
+}
+</style>
+
+
+<style>
+  #manageProductsPanel {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    display: none;
+  }
+  #manageProductsPanel.show {
+    opacity: 1;
+    display: block;
+  }
+</style>
+
+
+<style>
+@media print {
+  #billView button {
+    display: none !important;
+  }
+  body, .mishra-bill {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 12px !important;
+  }
+  .mishra-bill table th, .mishra-bill table td {
+    padding: 4px !important;
+  }
+  .mishra-bill {
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+}
+</style>
+
+
+<style>
+body {
+  background: linear-gradient(135deg, #dfe9f3, #ffffff);
+}
+
+.login-form {
+  max-width: 400px;
+  margin: 80px auto;
+  padding: 30px 25px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.6s ease;
+}
+
+.login-form h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.login-form input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.login-form button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #3498db;
+  color: white;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.login-form button:hover {
+  background-color: #2980b9;
+}
+
+.login-form p {
+  text-align: center;
+  margin-top: 15px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+
+<style>
+.header, .cart, .summary, .admin {
+  background: #ffffff;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+}
+
+.header h1 {
+  color: #2c3e50;
+  font-size: 32px;
+}
+
+.header p, .summary p {
+  font-size: 15px;
+  color: #555;
+}
+
+input[type="text"], input[type="password"], input[type="number"] {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.btn {
+  background-color: #3498db;
+  padding: 10px 18px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn:hover {
+  background-color: #2980b9;
+}
+
+.cart-item, .admin-item {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin: 10px 0;
+  background-color: #f9f9f9;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+th {
+  background-color: #3498db;
+  color: white;
+  padding: 10px;
+}
+
+td {
+  padding: 10px;
+  text-align: center;
+}
+
+input[type="number"] {
+  width: 60px;
+  text-align: center;
+}
+</style>
+
+
+<style>
+:root {
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --primary-color: #3498db;
+  --header-bg: linear-gradient(to right, #6dd5ed, #2193b0);
+  --card-bg: #ffffff;
+}
+
+body.dark {
+  --bg-color: #1e1e1e;
+  --text-color: #f0f0f0;
+  --primary-color: #9b59b6;
+  --header-bg: linear-gradient(to right, #434343, #000000);
+  --card-bg: #2a2a2a;
+}
+
+body {
+  background: var(--bg-color);
+  color: var(--text-color);
+  transition: background 0.3s, color 0.3s;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.header, .cart, .summary, .admin {
+  background: var(--card-bg);
+  color: var(--text-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.header {
+  background: var(--header-bg);
+  color: white;
+  text-align: center;
+}
+
+.btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+input, select {
+  background: var(--card-bg);
+  color: var(--text-color);
+  border: 1px solid #ccc;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 24px;
+  }
+  input, .btn {
+    font-size: 14px;
+    width: 100%;
+  }
+}
+</style>
+
+<script>
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+}
+</script>
+
+
+<style>
+body {
+  background: linear-gradient(120deg, #fdfbfb, #ebedee);
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+}
+
+.header, .cart, .summary, .admin, .login-form {
+  background: #ffffff;
+  padding: 20px;
+  margin: 20px auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  max-width: 960px;
+}
+
+.header {
+  background: linear-gradient(to right, #a8edea, #fed6e3);
+  color: white;
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 32px;
+}
+
+input[type="text"], input[type="password"], input[type="number"] {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+}
+
+.btn {
+  background: linear-gradient(to right, #ff6a00, #ee0979);
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  font-size: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.cart-item, .admin-item {
+  background: #f4f6f8;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 24px;
+  }
+  .btn, input {
+    font-size: 14px;
+  }
+  .login-form, .header, .cart, .summary, .admin {
+    margin: 10px;
+    padding: 15px;
+  }
+}
+</style>
+
+
+<style>
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #ffffffdd;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  max-width: 380px;
+  margin: 10vh auto;
+  padding: 30px 30px 20px;
+  animation: fadeIn 0.5s ease;
+}
+.login-form h2 {
+  color: #2c3e50;
+  font-size: 26px;
+  margin-bottom: 20px;
+}
+.login-form input, .login-form button {
+  width: 100%;
+  max-width: 320px;
+}
+</style>
+
+
+<style>
+@media print {
+  .mishra-bill {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 20px !important;
+    margin: 0 auto !important;
+    overflow: hidden !important;
+  }
+
+  .mishra-bill table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+    table-layout: fixed !important;
+  }
+
+  .mishra-bill th, .mishra-bill td {
+    border: 1px solid #000 !important;
+    word-wrap: break-word !important;
+    padding: 6px !important;
+    font-size: 14px !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+  }
+
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  @page {
+    margin: 10mm;
+    size: A4 portrait;
+  }
+}
+</style>
+
+
+<style>
+.simple-product {
+  background-color: #f0f9ff;
+  border: 2px solid #3498db;
+  border-radius: 10px;
+  padding: 15px;
+  margin: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
+}
+.add-btn {
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.add-btn:hover {
+  background-color: #219150;
+}
+</style>
+
+</head>
+<body>
+
+<!-- Login Form -->
+<div class="login-form">
+  <h2>Login</h2>
+  <input type="text" id="loginEmail" placeholder="Enter Email or Phone" />
+  <input type="password" id="loginPassword" placeholder="Enter Password" />
+  <button class="btn" onclick="validateLogin(event)">Login</button>
+  <p><a href="#" onclick="forgotPassword()">Forgot Password?</a> | <a href="#" onclick="createAccount()">Create Account</a></p>
+</div>
+
+<!-- Main Content after Login -->
+<div id="mainContent" style="display:none;">
+
+<div style="text-align: right; margin-bottom: 10px;">
+  <button class="btn" onclick="logout()">Logout</button>
+</div>
+
+  
+<div class="admin">
+  <button class="btn" onclick="toggleBizEditor()" id="toggleBizBtn">Show Business Info Editor</button>
+  <div id="bizEditor" style="display:none; margin-top: 10px;">
+    <h3>Edit Business Info</h3>
+    <input type="text" id="bizName" placeholder="Business Name" />
+    <input type="text" id="bizCaption" placeholder="Business Caption" />
+    <input type="text" id="bizAddress" placeholder="Business Address" />
+    <input type="text" id="bizPhone" placeholder="Phone Number" />
+    <button class="btn" onclick="saveBusinessInfo()">Save</button>
+  </div>
+</div>
+
+<div class="header">
+    <h1 class="highlight">Siri Automobiles</h1>
+    <p>Automobile Spare Parts Supplier</p>
+    <p>Phone: 9154673484 | Kakinada, Andhra Pradesh - 533005</p>
+    <p id="currentDate"></p>
+  </div>
+
+  
+<button class="btn" onclick="toggleItems()" id="toggleItemsBtn">Show Items</button>
+<br><br>
+<input type="text" id="searchBar" placeholder="Search products..." onkeyup="filterProducts()" />
+
+  <div id="productList" style="display:none;"></div>
+<!-- Simplified Product Display Section -->
+
+
+
+  <div class="cart">
+    <h2>Cart</h2>
+    <div id="cartList"></div>
+  </div>
+
+  <div class="summary">
+    <p>Customer Name: <input type="text" id="customerName" placeholder="Enter Name" style="width: 200px;"/></p>
+<p>Mobile Number: <input type="text" id="customerNumber" placeholder="Enter Mobile Number" style="width: 200px;"/></p>
+    <p>Total Items: <span id="totalItems">0</span></p>
+    <p>Subtotal: ₹<span id="subtotal">0.00</span></p>
+    <p>
+      GST %: <input type="number" id="gstInput" value="0" onchange="updateTotals()" />%
+      Discount %: <input type="number" id="discountInput" value="0" onchange="updateTotals()" />%
+    </p>
+    <h3>Final Total: <span class="highlight">₹<span id="finalTotal">0.00</span></span></h3>
+    <button class="btn" onclick="printBill()">Print Bill</button>
+
+<button class="btn" onclick="thermalPrintBill()">Print Thermal Receipt</button>
+
+    <button class="btn" onclick="sendToWhatsApp()">Send to WhatsApp</button>
+<button class="btn" onclick="saveTransaction()">Save to History</button>
+  </div>
+
+  <div class="admin">
+    <button class="btn" onclick="showManageProducts()">Show Manage Products</button>
+<h2 style="display:none;" id="manageHeader">Admin Panel - Manage Products</h2>
+    <div id="manageProductsPanel">
+<button class="btn" onclick="hideManageProducts()">Back</button>
+<div id="adminProductList"></div>
+    </div>
+<h3>Add New Product</h3>
+    <input type="text" id="newProductName" placeholder="Product Name" />
+    <input type="number" id="newProductPrice" placeholder="Price" />
+    <button class="btn" onclick="addProduct()">Add Item</button>
+  </div>
+
+<div class="admin">
+  <h2>Monthly History</h2>
+  <button class="btn" onclick="showMonthlyHistory()">Show History</button>
+  <div id="historyList"></div>
+<button class="btn" onclick="downloadHistoryAsExcel()">Download as Excel</button>
+</div>
+
+
+<!-- Print Bill View -->
+<div id="billView" style="display:none; padding: 20px; background: #fff; position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; z-index: 9999;">
+  <div id="billContent"></div>
+  <button class="btn" onclick="hideBill()">Back</button>
+  <button class="btn" onclick="window.print()">Print</button>
+</div>
+
+<script>
+// Login Functionality
+function validateLogin(event) {
+  event.preventDefault(); // Prevent the form from submitting and reloading the page
+
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+  const validEmail = "anisetti9154@gmail.com";
+  const validPassword = "1234";
+
+  console.log('Login button clicked'); // Debugging log
+
+  if (email === validEmail && password === validPassword) {
+    console.log('Login Successful'); // Debugging log
+    document.querySelector(".login-form").style.display = "none";
+    document.getElementById("mainContent").style.display = "block";
+    displayProducts();
+    updateCurrentDate();
+  } else {
+    console.log('Invalid credentials'); // Debugging log
+    alert("Invalid credentials! Try again.");
+  }
+}
+
+// Hardcoded security question and answer
+const securityQuestion = "What is your favorite vehicle?";
+const correctSecurityAnswer = "supra mk4";  // You can change this
+
+function forgotPassword() {
+  const userEmail = prompt("Enter your registered email:");
+  if (!userEmail || userEmail !== "anisetti9154@gmail.com") {
+    alert("Email not recognized.");
+    return;
+  }
+
+  const userAnswer = prompt(securityQuestion);
+  if (userAnswer && userAnswer.toLowerCase().trim() === correctSecurityAnswer.toLowerCase()) {
+    alert("Your password is: 1234");
+  } else {
+    alert("Incorrect answer. Access denied.");
+  }
+}
+
+// Product and Cart
+let products = [
+  { id: 1, name: "King Pin", price: 1200 },
+  { id: 2, name: "Clutch Plate", price: 3200 },
+  { id: 3, name: "Brake Drum", price: 2750 },
+  { id: 4, name: "Tie Rod End", price: 890 },
+  { id: 5, name: "Leaf Spring", price: 4300 },
+  { id: 6, name: "Axle Shaft", price: 5000 },
+  { id: 7, name: "Propeller Shaft", price: 4150 },
+  { id: 8, name: "Oil Seal", price: 190 },
+  { id: 9, name: "Fan Belt", price: 310 },
+];
+const cart = {};
+let nextProductId = products.length + 1;
+let editingProductId = null;
+
+function displayProducts() {
+  const list = document.getElementById("productList");
+  list.innerHTML = "";
+  products.forEach(product => {
+    const item = document.createElement("div");
+    item.className = "product";
+    item.innerHTML = `
+      <div>
+        <strong>${product.name}</strong><br>Price: ₹${product.price}
+      </div>
+      <div>
+        Qty: <button class="btn" onclick="decrementQuantity(${product.id})" style="padding: 0 5px; margin-right: 5px;">➖</button>
+<input type="number" id="qty-${product.id}" value="1" min="1" style="width: 50px; display:inline-block; text-align:center;"/>
+<button class="btn" onclick="incrementQuantity(${product.id})" style="padding: 0 5px; margin-left: 5px;">➕</button>
+        <button class="btn" onclick="addToCart(${product.id})">Add</button>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+  displayAdminProducts();
+}
+
+
+function filterProducts() {
+  const query = document.getElementById("searchBar").value.toLowerCase().trim();
+  const list = document.getElementById("productList");
+  const btn = document.getElementById("toggleItemsBtn");
+
+  if (!query) {
+    list.style.display = "none";
+    btn.innerText = "Show Items";
+    return;
+  }
+
+  const filtered = products.filter(p => p.name.toLowerCase().includes(query));
+  if (filtered.length > 0) {
+    list.style.display = "block";
+    btn.innerText = "Back";
+  } else {
+    list.style.display = "none";
+    btn.innerText = "Show Items";
+  }
+
+  list.innerHTML = filtered.map(product => `
+    <div class="product">
+      <div><strong>${product.name}</strong><br>Price: ₹${product.price}</div>
+      <div>
+        Qty: <button class="btn" onclick="decrementQuantity(${product.id})" style="padding: 0 5px; margin-right: 5px;">➖</button>
+        <input type="number" id="qty-${product.id}" value="1" min="1" style="width: 50px; display:inline-block; text-align:center;" />
+        <button class="btn" onclick="incrementQuantity(${product.id})" style="padding: 0 5px; margin-left: 5px;">➕</button>
+        <button class="btn" onclick="addToCart(${product.id})">Add</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+
+function addToCart(productId) {
+  const product = products.find(p => p.id === productId);
+  const qty = parseInt(document.getElementById(`qty-${productId}`).value) || 1;
+  cart[product.name] = cart[product.name] || {...product, quantity: 0};
+  cart[product.name].quantity += qty;
+  updateCart();
+}
+
+function updateCart() {
+  const cartList = document.getElementById("cartList");
+  cartList.innerHTML = "";
+  let total = 0;
+  let totalItems = 0;
+  for (const itemName in cart) {
+    const item = cart[itemName];
+    const itemTotal = item.price * item.quantity;
+    total += itemTotal;
+    totalItems += item.quantity;
+    const cartItem = document.createElement("div");
+    cartItem.className = "cart-item";
+    cartItem.innerHTML = `
+      ${item.name} (x${item.quantity}) - ₹${itemTotal.toFixed(2)}
+      <button class="btn" style="margin-left:10px;" onclick="removeFromCart('${itemName}')">Remove</button>
+    `;
+    cartList.appendChild(cartItem);
+  }
+  document.getElementById("subtotal").innerText = total.toFixed(2);
+  document.getElementById("totalItems").innerText = totalItems;
+  updateTotals();
+}
+
+function updateTotals() {
+  const subtotal = parseFloat(document.getElementById("subtotal").innerText);
+  const gst = parseFloat(document.getElementById("gstInput").value) || 0;
+  const discount = parseFloat(document.getElementById("discountInput").value) || 0;
+  const gstAmount = subtotal * gst / 100;
+  const discountAmount = subtotal * discount / 100;
+  const finalTotal = subtotal + gstAmount - discountAmount;
+  document.getElementById("finalTotal").innerText = finalTotal.toFixed(2);
+}
+
+function updateCurrentDate() {
+  const today = new Date();
+  const date = today.toDateString();
+  document.getElementById("currentDate").innerText = date;
+}
+
+function printBill() {
+  document.getElementById("billContent").innerHTML = "";
+  let cartHtml = "";
+  for (const [name, item] of Object.entries(cart)) {
+    cartHtml += `<p>${name} x ${item.quantity} = ₹${(item.price * item.quantity).toFixed(2)}</p>`;
+  }
+
+  const billContent = `
+    <h1>Siri Automobiles</h1>
+    <h2>Invoice</h2>
+    <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+    <p><strong>Customer:</strong> ${document.getElementById("customerName").value}</p>
+    <p><strong>Total Items:</strong> ${document.getElementById("totalItems").textContent}</p>
+    <p><strong>Subtotal:</strong> ₹${document.getElementById("subtotal").textContent}</p>
+    <p><strong>GST:</strong> ₹${(parseFloat(document.getElementById("subtotal").textContent) * (parseFloat(document.getElementById("gstInput").value) || 0) / 100).toFixed(2)}</p>
+    <p><strong>Discount:</strong> ₹${(parseFloat(document.getElementById("subtotal").textContent) * (parseFloat(document.getElementById("discountInput").value) || 0) / 100).toFixed(2)}</p>
+    <h3>Final Total: ₹${document.getElementById("finalTotal").textContent}</h3>
+    <hr>
+    <h3>Items:</h3>
+    ${cartHtml}
+  `;
+  document.getElementById("billContent").innerHTML = billContent;
+  document.getElementById("billView").style.display = "block";
+  
+}
+
+function hideBill() {
+  document.getElementById("billView").style.display = "none";
+}
+
+function sendToWhatsApp() {
+  const customerName = document.getElementById("customerName").value.trim();
+  const gst = parseFloat(document.getElementById("gstInput").value) || 0;
+  const discount = parseFloat(document.getElementById("discountInput").value) || 0;
+  const subtotal = parseFloat(document.getElementById("subtotal").textContent);
+  const total = subtotal * (1 + gst / 100) * (1 - discount / 100);
+
+  const message = `**Siri Automobiles Total Bill**\n\nCustomer: ${customerName || "N/A"}\n\n${Object.entries(cart).map(([name, item]) => 
+    `${name} x ${item.quantity} = ₹${item.price * item.quantity}`).join('\n')}
+\nSubtotal: ₹${subtotal.toFixed(2)}
+\nGST (${gst}%): ₹${(subtotal * gst / 100).toFixed(2)}
+\nDiscount (${discount}%): ₹${(subtotal * discount / 100).toFixed(2)}
+\nTotal : ₹${total.toFixed(2)}\n\nHello ${customerName || "Customer"}, your final amount is ₹${total.toFixed(2)}. Thank you for choosing Siri Automobiles.`;
+
+  window.open(`https://wa.me/?text=${encodeURIComponent(message)}`);
+  
+}
+
+
+function removeFromCart(itemName) {
+  if (cart[itemName]) {
+    delete cart[itemName];
+    updateCart();
+  }
+}
+
+
+function saveTransaction() {
+  const history = JSON.parse(localStorage.getItem("transactionHistory") || "[]");
+
+  history.push({
+    date: new Date().toISOString(),
+    customer: document.getElementById("customerName").value,
+    phone: document.getElementById("customerNumber").value,
+    items: Object.values(cart),
+    subtotal: parseFloat(document.getElementById("subtotal").textContent),
+    gst: parseFloat(document.getElementById("gstInput").value),
+    discount: parseFloat(document.getElementById("discountInput").value),
+    finalTotal: parseFloat(document.getElementById("finalTotal").textContent)
+  });
+
+  localStorage.setItem("transactionHistory", JSON.stringify(history));
+}
+
+function showMonthlyHistory() {
+  const history = JSON.parse(localStorage.getItem("transactionHistory") || "[]");
+  const grouped = {};
+
+  history.forEach(entry => {
+    const month = new Date(entry.date).toLocaleString('default', { month: 'long', year: 'numeric' });
+    if (!grouped[month]) grouped[month] = [];
+    grouped[month].push(entry);
+  });
+
+  const container = document.getElementById("historyList");
+  container.innerHTML = "";
+
+  for (const month in grouped) {
+    const monthSection = document.createElement("div");
+    monthSection.innerHTML = `<h3>${month}</h3>
+    <table style="width: 100%; border-collapse: collapse;" border="1">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Customer Name</th>
+          <th>Mobile Number</th>
+          <th>Items</th>
+          <th>Subtotal</th>
+          <th>GST</th>
+          <th>Discount</th>
+          <th>Final Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${grouped[month].map(e => `
+          <tr>
+            <td>${new Date(e.date).toLocaleString()}</td>
+            <td>${e.customer || 'N/A'}</td>
+            <td>${e.phone || 'N/A'}</td>
+            <td>${e.items.map(i => `${i.name} x${i.quantity}`).join(", ")}</td>
+            <td>₹${e.subtotal.toFixed(2)}</td>
+            <td>${e.gst}%</td>
+            <td>${e.discount}%</td>
+            <td>₹${e.finalTotal.toFixed(2)}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table><br>`;
+    container.appendChild(monthSection);
+  }
+
+  const btns = document.createElement("div");
+  btns.innerHTML = `
+    <button class="btn" onclick="clearHistory()">Clear Chat</button>
+    <button class="btn" onclick="goBack()">Back</button>
+  `;
+  container.appendChild(btns);
+}
+
+</script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+
+<script>
+function downloadHistoryAsExcel() {
+  const history = JSON.parse(localStorage.getItem("transactionHistory") || "[]");
+  const data = history.map(e => ({
+    Date: new Date(e.date).toLocaleString(),
+    Customer: e.customer,
+    Phone: e.phone,
+    Items: e.items.map(i => `${i.name} x${i.quantity}`).join(", "),
+    Subtotal: e.subtotal,
+    GST: e.gst,
+    Discount: e.discount,
+    Final_Total: e.finalTotal
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "History");
+
+  XLSX.writeFile(wb, "Monthly_History.xlsx");
+}
+
+function downloadHistoryAsPDF() {
+  const element = document.getElementById("historyList");
+  html2pdf().from(element).save("Monthly_History.pdf");
+}
+</script>
+
+
+<style>
+  .mishra-bill {
+    font-family: 'Courier New', monospace;
+    padding: 15px;
+    width: 100%;
+    max-width: 750px;
+    margin: auto;
+    border: 2px solid #444;
+    background-color: #f9f9f9;
+    color: #222;
+  }
+  .mishra-bill h2 {
+    text-align: center;
+    margin-bottom: 5px;
+    color: #2c3e50;
+  }
+  .mishra-bill .header-line {
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: #555;
+  }
+  .mishra-bill .info {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px dashed #aaa;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+    font-size: 14px;
+  }
+  .mishra-bill table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  .mishra-bill th {
+    background-color: #3498db;
+    color: white;
+    padding: 6px;
+  }
+  .mishra-bill th, .mishra-bill td {
+    border: 1px solid #999;
+    padding: 6px;
+    text-align: center;
+    font-size: 14px;
+  }
+  .mishra-bill .summary td {
+    padding: 6px;
+    font-size: 14px;
+  }
+  .thank-you {
+    text-align: center;
+    margin-top: 15px;
+    font-weight: bold;
+    color: #e67e22;
+    font-size: 16px;
+  }
+</style>
+
+<script>
+function printBill() {
+  document.getElementById("billContent").innerHTML = "";
+  const name = document.getElementById("customerName").value || "N/A";
+  const number = document.getElementById("customerNumber").value || "N/A";
+  const subtotal = parseFloat(document.getElementById("subtotal").textContent);
+  const gst = parseFloat(document.getElementById("gstInput").value) || 0;
+  const discount = parseFloat(document.getElementById("discountInput").value) || 0;
+  const gstAmount = subtotal * gst / 100;
+  const discountAmount = subtotal * discount / 100;
+  const finalTotal = subtotal + gstAmount - discountAmount;
+
+  let rows = "";
+  let index = 1;
+  for (const [key, item] of Object.entries(cart)) {
+    const total = (item.price * item.quantity).toFixed(2);
+    rows += `<tr>
+      <td>${index++}</td>
+      <td>${item.name}</td>
+      <td>${item.quantity}</td>
+      <td>₹${item.price}</td>
+      <td>₹${total}</td>
+    </tr>`;
+  }
+
+  const billContent = `
+    <div class="mishra-bill">
+      <h2>Siri Automobiles</h2>
+      <div class="header-line">Kakinada, Andhra Pradesh - 533005 | Phone: 9154673484</div>
+      <div class="info">
+        <div>
+          <p><strong>Customer Name:</strong> ${name}</p>
+          <p><strong>Mobile Number:</strong> ${number}</p>
+        </div>
+        <div>
+          <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Sr. No.</th>
+            <th>Description of Goods</th>
+            <th>Qty</th>
+            <th>Rate</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+
+      <table class="summary">
+        <tr><td><strong>Subtotal</strong></td><td>₹${subtotal.toFixed(2)}</td></tr>
+        <tr><td><strong>GST (${gst}%)</strong></td><td>₹${gstAmount.toFixed(2)}</td></tr>
+        <tr><td><strong>Discount (${discount}%)</strong></td><td>₹${discountAmount.toFixed(2)}</td></tr>
+        <tr><td><strong>Final Total</strong></td><td><strong>₹${finalTotal.toFixed(2)}</strong></td></tr>
+      </table>
+
+      <p class="thank-you">Thank you for visiting Siri Automobiles!</p>
+    </div>
+  `;
+
+  document.getElementById("billContent").innerHTML = billContent;
+  document.getElementById("billView").style.display = "block";
+  
+}
+</script>
+
+
+<script>
+function clearHistory() {
+  if (confirm("Are you sure you want to clear all history? This action cannot be undone.")) {
+    localStorage.removeItem("transactionHistory");
+    alert("History cleared successfully.");
+    document.getElementById("historyList").innerHTML = ""; // Clear the UI
+  }
+}
+
+function goBack() {
+  document.getElementById("historyList").innerHTML = "";
+}
+</script>
+
+
+<script>
+function displayAdminProducts() {
+  const list = document.getElementById("adminProductList");
+  list.innerHTML = "";
+  products.forEach((product, index) => {
+    const item = document.createElement("div");
+    item.className = "admin-item flex";
+    item.innerHTML = `
+      <span>${product.name} - ₹${product.price}</span>
+      <div class="admin-actions">
+        <button onclick="removeProduct(${index})" title="Delete Item" style="background: none; border: none; cursor: pointer;">
+          <img src="https://img.icons8.com/material-outlined/24/000000/trash--v1.png" alt="Delete" />
+        </button>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+}
+function removeProduct(index) {
+  if (confirm("Do you really want to delete this item?")) {
+    products.splice(index, 1);
+    displayProducts(); // Refresh both product and admin list
+  }
+}
+function showManageProducts() {
+  const panel = document.getElementById("manageProductsPanel");
+  const header = document.getElementById("manageHeader");
+  panel.classList.add("show");
+  header.style.display = "block";
+  event.target.style.display = "none";
+  displayAdminProducts();
+}
+function hideManageProducts() {
+  const panel = document.getElementById("manageProductsPanel");
+  const header = document.getElementById("manageHeader");
+  panel.classList.remove("show");
+  document.querySelector("button[onclick='showManageProducts()']").style.display = "inline-block";
+  header.style.display = "none";
+}
+</script>
+
+
+<script>
+// Load products from localStorage if available
+const storedProducts = JSON.parse(localStorage.getItem("savedProducts"));
+if (storedProducts && Array.isArray(storedProducts)) {
+  products = storedProducts;
+}
+
+// Save products to localStorage whenever updated
+function saveProducts() {
+  localStorage.setItem("savedProducts", JSON.stringify(products));
+}
+
+// Modify addProduct to also save to localStorage
+function addProduct() {
+  const name = document.getElementById("newProductName").value.trim();
+  const price = parseFloat(document.getElementById("newProductPrice").value);
+  if (!name || isNaN(price)) {
+    alert("Please enter valid product name and price.");
+    return;
+  }
+  products.push({ id: nextProductId++, name, price });
+  saveProducts();
+  displayProducts();
+  document.getElementById("newProductName").value = "";
+  document.getElementById("newProductPrice").value = "";
+}
+
+// Update removeProduct to also save to localStorage
+function removeProduct(index) {
+  if (confirm("Do you really want to delete this item?")) {
+    products.splice(index, 1);
+    saveProducts();
+    displayProducts();
+  }
+}
+</script>
+
+
+<script>
+let currentUser = null;
+
+// Extend validateLogin to set currentUser and load that user's products
+const originalValidateLogin = validateLogin;
+validateLogin = function(event) {
+  event.preventDefault();
+  const email = document.getElementById("loginEmail").value;
+  currentUser = email;
+  loadUserProducts();
+  originalValidateLogin(event);
+};
+
+function getUserKey() {
+  return "savedProducts_" + (currentUser || "guest");
+}
+
+function loadUserProducts() {
+  const saved = JSON.parse(localStorage.getItem(getUserKey()));
+  if (saved && Array.isArray(saved)) {
+    products = saved;
+  }
+}
+
+function saveProducts() {
+  if (currentUser) {
+    localStorage.setItem(getUserKey(), JSON.stringify(products));
+  }
+}
+</script>
+
+
+<script>
+function incrementQuantity(productId) {
+  const qtyInput = document.getElementById("qty-" + productId);
+  qtyInput.value = parseInt(qtyInput.value) + 1;
+}
+function decrementQuantity(productId) {
+  const qtyInput = document.getElementById("qty-" + productId);
+  if (parseInt(qtyInput.value) > 1) {
+    qtyInput.value = parseInt(qtyInput.value) - 1;
+  }
+}
+</script>
+
+
+<script>
+function logout() {
+  document.getElementById("mainContent").style.display = "none";
+  document.querySelector(".login-form").style.display = "block";
+}
+</script>
+
+<script>
+function toggleBizEditor() {
+  const panel = document.getElementById("bizEditor");
+  const btn = document.getElementById("toggleBizBtn");
+  if (panel.style.display === "none") {
+    panel.style.display = "block";
+    btn.innerText = "Back";
+  } else {
+    panel.style.display = "none";
+    btn.innerText = "Show Business Info Editor";
+  }
+}
+
+function saveBusinessInfo() {
+  const name = document.getElementById("bizName").value.trim();
+  const caption = document.getElementById("bizCaption").value.trim();
+  const address = document.getElementById("bizAddress").value.trim();
+  const phone = document.getElementById("bizPhone").value.trim();
+  localStorage.setItem("businessInfo", JSON.stringify({ name, caption, address, phone }));
+  applyBusinessInfo();
+}
+
+function applyBusinessInfo() {
+  const info = JSON.parse(localStorage.getItem("businessInfo") || "{}");
+  const name = info.name || "Siri Automobiles";
+  const caption = info.caption || "Automobile Spare Parts Supplier";
+  const address = info.address || "Kakinada, Andhra Pradesh - 533005";
+  const phone = info.phone || "9154673484";
+
+  document.querySelector(".header h1").innerText = name;
+  const headerP = document.querySelectorAll(".header p");
+  if (headerP.length > 1) {
+    headerP[0].innerText = caption;
+    headerP[1].innerText = `Phone: ${phone} | ${address}`;
+  }
+
+  if (document.getElementById("billContent").innerHTML.includes("Siri Automobiles")) {
+    printBill();
+  }
+}
+
+window.onload = function () {
+  applyBusinessInfo();
+};
+</script>
+
+
+<script>
+function getBusinessInfo() {
+  const info = JSON.parse(localStorage.getItem("businessInfo") || "{}");
+  return {
+    name: info.name || "Siri Automobiles",
+    caption: info.caption || "Automobile Spare Parts Supplier",
+    address: info.address || "Kakinada, Andhra Pradesh - 533005",
+    phone: info.phone || "9154673484"
+  };
+}
+
+// Override printBill without changing the original function
+window.originalPrintBill = printBill;
+printBill = function() {
+  const { name, caption, address, phone } = getBusinessInfo();
+  document.getElementById("billContent").innerHTML = "";
+  const customerName = document.getElementById("customerName").value || "N/A";
+  const customerNumber = document.getElementById("customerNumber").value || "N/A";
+  const subtotal = parseFloat(document.getElementById("subtotal").textContent);
+  const gst = parseFloat(document.getElementById("gstInput").value) || 0;
+  const discount = parseFloat(document.getElementById("discountInput").value) || 0;
+  const gstAmount = subtotal * gst / 100;
+  const discountAmount = subtotal * discount / 100;
+  const finalTotal = subtotal + gstAmount - discountAmount;
+
+  let rows = "";
+  let index = 1;
+  for (const [key, item] of Object.entries(cart)) {
+    const total = (item.price * item.quantity).toFixed(2);
+    rows += `<tr>
+      <td>${index++}</td>
+      <td>${item.name}</td>
+      <td>${item.quantity}</td>
+      <td>₹${item.price}</td>
+      <td>₹${total}</td>
+    </tr>`;
+  }
+
+  const billContent = `
+    <div class="mishra-bill">
+      <h2>${name}</h2>
+      <div class="header-line">${address} | Phone: ${phone}</div>
+      <div class="info">
+        <div>
+          <p><strong>Customer Name:</strong> ${customerName}</p>
+          <p><strong>Mobile Number:</strong> ${customerNumber}</p>
+        </div>
+        <div>
+          <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Sr. No.</th>
+            <th>Description of Goods</th>
+            <th>Qty</th>
+            <th>Rate</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+
+      <table class="summary">
+        <tr><td><strong>Subtotal</strong></td><td>₹${subtotal.toFixed(2)}</td></tr>
+        <tr><td><strong>GST (${gst}%)</strong></td><td>₹${gstAmount.toFixed(2)}</td></tr>
+        <tr><td><strong>Discount (${discount}%)</strong></td><td>₹${discountAmount.toFixed(2)}</td></tr>
+        <tr><td><strong>Final Total</strong></td><td><strong>₹${finalTotal.toFixed(2)}</strong></td></tr>
+      </table>
+
+      <p class="thank-you">Thank you for visiting ${name}!</p>
+    </div>
+  `;
+
+  document.getElementById("billContent").innerHTML = billContent;
+  document.getElementById("billView").style.display = "block";
+  
+};
+
+// Override sendToWhatsApp
+window.originalSendToWhatsApp = sendToWhatsApp;
+sendToWhatsApp = function() {
+  const { name, address, phone } = getBusinessInfo();
+  const customerName = document.getElementById("customerName").value.trim();
+  const gst = parseFloat(document.getElementById("gstInput").value) || 0;
+  const discount = parseFloat(document.getElementById("discountInput").value) || 0;
+  const subtotal = parseFloat(document.getElementById("subtotal").textContent);
+  const gstAmount = subtotal * gst / 100;
+  const discountAmount = subtotal * discount / 100;
+  const total = subtotal + gstAmount - discountAmount;
+
+  const message = `**${name} Total Bill**
+
+Customer: ${customerName || "N/A"}
+${Object.entries(cart).map(([name, item]) => 
+    `${name} x ${item.quantity} = ₹${item.price * item.quantity}`).join('\n')}
+\nSubtotal: ₹${subtotal.toFixed(2)}
+\nGST (${gst}%): ₹${gstAmount.toFixed(2)}
+\nDiscount (${discount}%): ₹${discountAmount.toFixed(2)}
+\nTotal : ₹${total.toFixed(2)}
+\n\n${name} - ${address}
+\nPhone: ${phone}
+\nThank you for shopping with us!`;
+
+  window.open("https://wa.me/?text=" + encodeURIComponent(message));
+  
+};
+</script>
+
+
+<script>
+// Admin credentials
+const ADMIN_USERNAME = "9154673484";
+const ADMIN_PASSWORD = "1234";
+const ADMIN_PIN = "915467";
+const ADMIN_SECURITY_Q = "Your first lover name";
+const ADMIN_SECURITY_ANS = "ramya";
+
+// Override validateLogin (non-destructively)
+const _orig_validateLogin = validateLogin;
+validateLogin = function(event) {
+  event.preventDefault();
+  const user = document.getElementById("loginEmail").value.trim();
+  const pass = document.getElementById("loginPassword").value.trim();
+
+  if (user === ADMIN_USERNAME && pass === ADMIN_PASSWORD) {
+    const pin = prompt("Enter Admin PIN:");
+    if (pin !== ADMIN_PIN) {
+      alert("Incorrect PIN.");
+      return;
+    }
+    alert("Welcome, Admin!");
+    currentUser = ADMIN_USERNAME;
+    localStorage.setItem("currentUser", currentUser);
+    document.querySelector(".login-form").style.display = "none";
+    document.getElementById("mainContent").style.display = "block";
+    displayProducts();
+    updateCurrentDate();
+    showAllUsers();
+    return;
+  }
+
+  const users = JSON.parse(localStorage.getItem("users") || "{}");
+  if (users[user] && users[user].password === pass) {
+    currentUser = user;
+    localStorage.setItem("currentUser", currentUser);
+    document.querySelector(".login-form").style.display = "none";
+    document.getElementById("mainContent").style.display = "block";
+    displayProducts();
+    updateCurrentDate();
+  } else {
+    alert("Invalid credentials!");
+  }
+};
+
+// Replace forgotPassword
+function forgotPassword() {
+  const user = prompt("Enter your username:");
+  if (!user) return;
+
+  if (user === ADMIN_USERNAME) {
+    const ans = prompt(ADMIN_SECURITY_Q);
+    if (ans && ans.toLowerCase().trim() === ADMIN_SECURITY_ANS) {
+      alert("Admin password: " + ADMIN_PASSWORD);
+    } else {
+      alert("Wrong answer.");
+    }
+    return;
+  }
+
+  const users = JSON.parse(localStorage.getItem("users") || "{}");
+  if (!users[user]) {
+    alert("User not found.");
+    return;
+  }
+
+  const q = users[user].question;
+  const a = prompt(q);
+  if (a && a.toLowerCase().trim() === users[user].answer.toLowerCase().trim()) {
+    alert("Your password is: " + users[user].password);
+  } else {
+    alert("Incorrect answer.");
+  }
+}
+
+// Account creation (non-destructive)
+function createAccount() {
+  const username = prompt("Enter username:");
+  const password = prompt("Set password:");
+  const question = prompt("Security question:");
+  const answer = prompt("Answer:");
+  if (!username || !password || !question || !answer) {
+    alert("All fields are required.");
+    return;
+  }
+  const users = JSON.parse(localStorage.getItem("users") || "{}");
+  if (users[username]) {
+    alert("Username already exists.");
+    return;
+  }
+  users[username] = { password, question, answer };
+  localStorage.setItem("users", JSON.stringify(users));
+  alert("Account created successfully!");
+}
+
+// Admin can view all registered users
+function showAllUsers() {
+  if (currentUser !== ADMIN_USERNAME) return;
+  const users = JSON.parse(localStorage.getItem("users") || "{}");
+  let info = "Registered Users:\n";
+  for (const u in users) {
+    info += `User: ${u}, Password: ${users[u].password}\n`;
+  }
+  alert(info);
+}
+
+// Replace default product loading for users (non-admin)
+const _orig_loadUserProducts = loadUserProducts;
+loadUserProducts = function() {
+  const userKey = "savedProducts_" + (currentUser || "guest");
+  const data = JSON.parse(localStorage.getItem(userKey));
+  if (data && Array.isArray(data)) {
+    products = data;
+  } else if (currentUser !== ADMIN_USERNAME) {
+    products = [
+      { id: 101, name: "Sample Bolt", price: 100 },
+      { id: 102, name: "Sample Washer", price: 50 },
+      { id: 103, name: "Sample Lubricant", price: 200 }
+    ];
+  }
+};
+
+</script>
+
+
+<script>
+function toggleItems() {
+  const list = document.getElementById("productList");
+  const btn = document.getElementById("toggleItemsBtn");
+  if (list.style.display === "none") {
+    list.style.display = "block";
+    btn.innerText = "Back";
+  } else {
+    list.style.display = "none";
+    btn.innerText = "Show Items";
+  }
+}
+</script>
+
+<script>
+// Set default user 'Siri' (non-removable)
+(function() {
+  const users = JSON.parse(localStorage.getItem("users") || "{}");
+  if (!users["Siri"]) {
+    users["Siri"] = {
+      password: "1234",
+      question: "Default question",
+      answer: "default"
+    };
+    localStorage.setItem("users", JSON.stringify(users));
+  }
+})();
+</script>
+
+<script>
+function thermalPrintBill() {
+  const { name, caption, address, phone } = getBusinessInfo();
+  const customerName = document.getElementById("customerName").value || "N/A";
+  const customerNumber = document.getElementById("customerNumber").value || "N/A";
+  const subtotal = parseFloat(document.getElementById("subtotal").textContent);
+  const gst = parseFloat(document.getElementById("gstInput").value) || 0;
+  const discount = parseFloat(document.getElementById("discountInput").value) || 0;
+  const gstAmount = subtotal * gst / 100;
+  const discountAmount = subtotal * discount / 100;
+  const finalTotal = subtotal + gstAmount - discountAmount;
+
+  let lines = "";
+  for (const [key, item] of Object.entries(cart)) {
+    const total = (item.price * item.quantity).toFixed(2);
+    lines += `<div style="display:flex; justify-content:space-between;"><span>${item.name} x${item.quantity}</span><span>₹${total}</span></div>`;
+  }
+
+  const billContent = `
+    <div style="font-family: monospace; font-size: 14px; max-width: 300px; margin: auto; padding: 10px;">
+      <div style="text-align: center;">
+        <strong>${name}</strong><br/>
+        ${caption}<br/>
+        ${address}<br/>
+        Phone: ${phone}<br/>
+        -----------------------------<br/>
+        Date: ${new Date().toLocaleString()}<br/>
+        Customer: ${customerName}<br/>
+        -----------------------------<br/>
+      </div>
+      ${lines}
+      <br/>-----------------------------<br/>
+      <div style="text-align:right;">
+        Subtotal: ₹${subtotal.toFixed(2)}<br/>
+        GST (${gst}%): ₹${gstAmount.toFixed(2)}<br/>
+        Discount (${discount}%): ₹${discountAmount.toFixed(2)}<br/>
+        <strong>Total: ₹${finalTotal.toFixed(2)}</strong><br/>
+      </div>
+      <div style="text-align: center; margin-top: 10px;">
+        Thank you for visiting!
+      </div>
+    </div>
+  `;
+  document.getElementById("billContent").innerHTML = billContent;
+  document.getElementById("billView").style.display = "block";
+  
+}
+</script>
+
+
+
+
+
+
+<script>
+function toggleSimpleProducts() {
+  const list = document.getElementById("simpleProductList");
+  const btn = document.getElementById("toggleSimpleBtn");
+  if (list.style.display === "none") {
+    list.style.display = "block";
+    btn.innerText = "Hide Items";
+  } else {
+    list.style.display = "none";
+    btn.innerText = "Show Items";
+  }
+}
+
+function displaySimpleProducts() {
+  const simpleList = document.getElementById("simpleProductList");
+  if (!simpleList) return;
+  simpleList.innerHTML = "";
+  products.forEach(product => {
+    const item = document.createElement("div");
+    item.className = "simple-product";
+    item.innerHTML = `
+      <div><strong>${product.name}</strong><br/>₹${product.price}</div>
+      <div>
+        <button class="add-btn" onclick="addToCart(${product.id})">➕</button>
+        <button class="add-btn" style="background-color:#e74c3c;" onclick="decrementFromCart(${product.id})">➖</button>
+      </div>
+    `;
+    simpleList.appendChild(item);
+  });
+}
+window.addEventListener("load", displaySimpleProducts);
+
+function decrementFromCart(productId) {
+  const product = products.find(p => p.id === productId);
+  if (product && cart[product.name]) {
+    if (cart[product.name].quantity > 1) {
+      cart[product.name].quantity -= 1;
+    } else {
+      delete cart[product.name]; // Remove if quantity becomes 0
+    }
+    updateCart();
+  }
+}
+</script>
+
+
+
+
+<script>
+function displayProducts() {
+  const list = document.getElementById("productList");
+  list.innerHTML = "";
+  products.forEach(product => {
+    const item = document.createElement("div");
+    item.className = "simple-product";
+    item.innerHTML = `
+      <div><strong>${product.name}</strong><br/>₹${product.price}</div>
+      <div>
+        <button class="add-btn" onclick="addToCartDirect(${product.id})">➕</button>
+        <button class="add-btn" style="background-color:#e74c3c;" onclick="decrementFromCart(${product.id})">➖</button>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+// Add to cart without needing input box
+function addToCartDirect(productId) {
+  const product = products.find(p => p.id === productId);
+  if (product) {
+    cart[product.name] = cart[product.name] || {...product, quantity: 0};
+    cart[product.name].quantity += 1;
+    updateCart();
+  }
+}
+</script>
+
+
+
+<div class="admin">
+  <h3>Backup & Restore</h3>
+  <button class="btn" onclick="exportData()">Export Backup</button><br><br>
+  <input type="file" id="importFile" accept=".json" onchange="importData(event)" />
+</div>
+
+<script>
+function exportData() {
+  const backup = {
+    products: JSON.parse(localStorage.getItem("savedProducts_" + currentUser) || "[]"),
+    history: JSON.parse(localStorage.getItem("transactionHistory") || "[]"),
+    businessInfo: JSON.parse(localStorage.getItem("businessInfo") || "{}"),
+    users: (currentUser === "9154673484") ? JSON.parse(localStorage.getItem("users") || "{}") : {}
+  };
+
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "saba_backup.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+
+      if (data.products) {
+        localStorage.setItem("savedProducts_" + currentUser, JSON.stringify(data.products));
+      }
+      if (data.history) {
+        localStorage.setItem("transactionHistory", JSON.stringify(data.history));
+      }
+      if (data.businessInfo) {
+        localStorage.setItem("businessInfo", JSON.stringify(data.businessInfo));
+      }
+      if (data.users && currentUser === "9154673484") {
+        localStorage.setItem("users", JSON.stringify(data.users));
+      }
+
+      alert("Backup imported successfully. Please reload the app.");
+      location.reload();
+    } catch (err) {
+      alert("Invalid backup file.");
+    }
+  };
+  reader.readAsText(file);
+}
+</script>
+
+
+<script>
+function showMonthlyHistory() {
+  const history = JSON.parse(localStorage.getItem("transactionHistory") || "[]");
+  const grouped = {};
+
+  history.forEach((entry, i) => {
+    const month = new Date(entry.date).toLocaleString('default', { month: 'long', year: 'numeric' });
+    if (!grouped[month]) grouped[month] = [];
+    grouped[month].push({ ...entry, index: i });
+  });
+
+  const container = document.getElementById("historyList");
+  container.innerHTML = "";
+
+  for (const month in grouped) {
+    const monthSection = document.createElement("div");
+    monthSection.innerHTML = `<h3>${month}</h3>
+    <table style="width: 100%; border-collapse: collapse;" border="1">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Customer Name</th>
+          <th>Mobile Number</th>
+          <th>Items</th>
+          <th>Subtotal</th>
+          <th>GST</th>
+          <th>Discount</th>
+          <th>Final Total</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${grouped[month].map(e => `
+          <tr>
+            <td>${new Date(e.date).toLocaleString()}</td>
+            <td>${e.customer || 'N/A'}</td>
+            <td>${e.phone || 'N/A'}</td>
+            <td>${e.items.map(i => `${i.name} x${i.quantity}`).join(", ")}</td>
+            <td>₹${e.subtotal.toFixed(2)}</td>
+            <td>${e.gst}%</td>
+            <td>${e.discount}%</td>
+            <td>₹${e.finalTotal.toFixed(2)}</td>
+            <td><button onclick="deleteMonthlyEntry(${e.index})" style="background:red;color:white;border:none;padding:5px 10px;border-radius:4px;">Delete</button></td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table><br>`;
+    container.appendChild(monthSection);
+  }
+
+  const btns = document.createElement("div");
+  btns.innerHTML = `
+    <button class="btn" onclick="clearHistory()">Clear Chat</button>
+    <button class="btn" onclick="goBack()">Back</button>
+  `;
+  container.appendChild(btns);
+}
+
+function deleteMonthlyEntry(index) {
+  const history = JSON.parse(localStorage.getItem("transactionHistory") || "[]");
+  if (index >= 0 && confirm("Delete this transaction?")) {
+    history.splice(index, 1);
+    localStorage.setItem("transactionHistory", JSON.stringify(history));
+    showMonthlyHistory();
+  }
+}
+</script>
+
+</body>
+
+
+</html>
+
+
+<script>
+function filterProducts() {
+  const query = document.getElementById("searchBar").value.toLowerCase().trim();
+  const list = document.getElementById("productList");
+  const btn = document.getElementById("toggleItemsBtn");
+
+  if (!query) {
+    list.style.display = "none";
+    btn.innerText = "Show Items";
+    return;
+  }
+
+  const filtered = products.filter(p => p.name.toLowerCase().includes(query));
+  if (filtered.length > 0) {
+    list.style.display = "block";
+    btn.innerText = "Back";
+  } else {
+    list.style.display = "none";
+    btn.innerText = "Show Items";
+  }
+
+  list.innerHTML = filtered.map(product => `
+    <div class="simple-product">
+      <div><strong>${product.name}</strong><br/>₹${product.price}</div>
+      <div>
+        <button class="add-btn" onclick="addToCartDirect(${product.id})">➕</button>
+        <button class="add-btn" style="background-color:#e74c3c;" onclick="decrementFromCart(${product.id})">➖</button>
+      </div>
+    </div>
+  `).join("");
+}
+</script>
